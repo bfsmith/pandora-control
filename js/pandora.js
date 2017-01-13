@@ -1,6 +1,13 @@
 (function () {
   let api = {};
 
+  const sendMessage = (msg) => {
+    const message = Object.assign(
+      { player: 'pandora' },
+      msg);
+    chrome.runtime.sendMessage(message);
+  }
+
   const onInit = () => {
     const playbackControl = document.querySelector('#playbackControl');
     const playButton = playbackControl.querySelector('.playButton');
@@ -23,12 +30,22 @@
     api.thumbDown = thumbDown;
     api.thumbUp = thumbUp;
     api.skip = skip;
+
+    playButton.addEventListener('click', (event) => {
+      sendMessage({ status: { playing: true } });
+    });
+    pauseButton.addEventListener('click', (event) => {
+      sendMessage({ status: { playing: false } });
+    });
+
+    setInterval(() => {
+      sendMessage({ status: { playing: isPlaying() } });
+    }, 5000);
   };
 
   let startupInterval = setInterval(() => {
     let playerBar = document.querySelector('#playerBar');
     if (playerBar) {
-      console.log('Found player bar, initting!');
       clearInterval(startupInterval);
       onInit();
       window.ext = api;
@@ -37,7 +54,6 @@
 
   chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
-      console.log('request', request);
       if (request.player === 'pandora') {
         switch (request.action) {
           case 'playpause': api.isPlaying() ? api.pause() : api.play();
@@ -48,8 +64,13 @@
             break;
           case 'skip': api.skip();
             break;
+          case 'play': api.play();
+            break;
+          case 'pause': api.pause();
+            break;
+          case 'status':
+            sendResponse({ status: { playing: api.isPlaying() } });
         }
-        sendResponse("Pandora handled");
       }
     });
 })();
