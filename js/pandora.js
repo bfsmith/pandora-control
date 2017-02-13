@@ -9,17 +9,24 @@
   }
 
   const onInit = () => {
-    const playbackControl = document.querySelector('#playbackControl');
-    const playButton = playbackControl.querySelector('.playButton');
-    const pauseButton = playbackControl.querySelector('.pauseButton');
-    const thumbDownButton = playbackControl.querySelector('.thumbDownButton');
-    const thumbUpButton = playbackControl.querySelector('.thumbUpButton');
-    const skipButton = playbackControl.querySelector('.skipButton');
+    const playbackControl = document.querySelector('.region-bottomBar');
+    // const playButton = playbackControl.querySelector('.PlayButton');
+    // const pauseButton = playbackControl.querySelector('.PlayButton');
+    const thumbDownButton = playbackControl.querySelector('.ThumbDownButton');
+    const thumbUpButton = playbackControl.querySelector('.ThumbUpButton');
+    const skipButton = playbackControl.querySelector('.SkipButton');
 
     const click = (el) => el.click();
-    const isPlaying = () => playButton.style.display === 'none';
-    const play = () => click(playButton);
-    const pause = () => click(pauseButton);
+    const isPlaying = () => playbackControl.querySelector('.PlayButton').dataset.qa === 'play_button';
+    const play = () => {
+      click(playbackControl.querySelector('.PlayButton'));
+      sendMessage({ status: { playing: true } });
+    };
+    const pause = () => {
+      click(playbackControl.querySelector('.PlayButton'));
+      sendMessage({ status: { playing: false } });
+
+    };
     const thumbDown = () => click(thumbDownButton);
     const thumbUp = () => click(thumbUpButton);
     const skip = () => click(skipButton);
@@ -31,20 +38,13 @@
     api.thumbUp = thumbUp;
     api.skip = skip;
 
-    playButton.addEventListener('click', (event) => {
-      sendMessage({ status: { playing: true } });
-    });
-    pauseButton.addEventListener('click', (event) => {
-      sendMessage({ status: { playing: false } });
-    });
-
     setInterval(() => {
       sendMessage({ status: { playing: isPlaying() } });
     }, 5000);
   };
 
   let startupInterval = setInterval(() => {
-    let playerBar = document.querySelector('#playerBar');
+    let playerBar = document.querySelector('.region-bottomBar');
     if (playerBar) {
       clearInterval(startupInterval);
       onInit();
