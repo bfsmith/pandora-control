@@ -1,5 +1,5 @@
 manifest.json
 *.zip
-*.xpi
 *.zip
 node_modules
+web-ext-artifacts
