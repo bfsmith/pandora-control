@@ -7,6 +7,8 @@ const players = {
   }
 };
 
+const browserControl = chrome || browser;
+
 const getTabId = (player) => {
   if (player === undefined) {
     return Promise.reject("Unknown player");
@@ -15,7 +17,7 @@ const getTabId = (player) => {
     return Promise.resolve(player.tabId);
   }
   return new Promise((resolve, reject) => {
-    chrome.tabs.query({ url: player.urlMatch }, (tabs) => {
+    browserControl.tabs.query({ url: player.urlMatch }, (tabs) => {
       if (!tabs || tabs.length === 0) {
         player.tabId = undefined;
       } else {
@@ -31,7 +33,7 @@ const sendMessage = (player, action) => {
     .then((id) => {
       if (id !== undefined) {
         return new Promise((resolve) => {
-          chrome.tabs.sendMessage(id, { player: player, action: action }, function (response) {
+          browserControl.tabs.sendMessage(id, { player: player, action: action }, function (response) {
             resolve(response);
           });
         });
@@ -43,16 +45,16 @@ const sendMessage = (player, action) => {
 const changeIcon = (status) => {
   if (status.playing !== undefined) {
     if (status.playing) {
-      chrome.browserAction.setIcon({ path: "img/pause.png" });
+      browserControl.browserAction.setIcon({ path: "img/pause.png" });
     } else {
-      chrome.browserAction.setIcon({ path: "img/play.png" });
+      browserControl.browserAction.setIcon({ path: "img/play.png" });
     }
   } else {
-    chrome.browserAction.setIcon({ path: "img/icon.png" });
+    browserControl.browserAction.setIcon({ path: "img/icon.png" });
   }
 }
 const startOrPlayPause = (player) => {
-  chrome.tabs.query({ url: player.urlMatch }, (tabs) => {
+  browserControl.tabs.query({ url: player.urlMatch }, (tabs) => {
     if (!tabs || tabs.length === 0) {
       chrome.tabs.create({ url: player.url, active: false, pinned: true }, (tab) => {
         player.tabId = tab.id;
@@ -63,17 +65,17 @@ const startOrPlayPause = (player) => {
   });
 }
 
-chrome.browserAction.onClicked.addListener(() => {
+browserControl.browserAction.onClicked.addListener(() => {
   startOrPlayPause(players.pandora);
 });
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+browserControl.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.status) {
     changeIcon(request.status);
   }
 });
 
-chrome.tabs.onRemoved.addListener((tabId) => {
+browserControl.tabs.onRemoved.addListener((tabId) => {
   const player = Object.keys(players)
     .map(k => players[k])
     .find(p => p.tabId == tabId);
@@ -82,7 +84,7 @@ chrome.tabs.onRemoved.addListener((tabId) => {
   }
 });
 
-chrome.commands.onCommand.addListener(command => {
+browserControl.commands.onCommand.addListener(command => {
   let [player, action] = command.split('-');
   sendMessage(player, action).catch(console.log.bind(console));
 });

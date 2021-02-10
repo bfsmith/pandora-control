@@ -2,8 +2,9 @@
   "manifest_version": 2,
   "name": "Pandora Control",
   "description": "This extension lets you control Pandora from the keyboard",
-  "version": "1.0.1",
-  "background": {
+  "version": "1.0",
+  "background-ignore": {
+    "persistent": false,
     "scripts": [
       "js/bg.js"
     ]
@@ -29,33 +30,36 @@
         "default": "Ctrl+Shift+Space",
         "mac": "Command+MacCtrl+Space"
       },
-      "description": "Play/Pause Pandora"
+      "description": "Play/Pause Pandora",
+      "global": true
     },
     "pandora-skip": {
       "suggested_key": {
         "default": "Ctrl+Shift+Right",
         "mac": "Command+MacCtrl+Right"
       },
-      "description": "Skip Pandora Song"
+      "description": "Skip Pandora Song",
+      "global": true
     },
     "pandora-thumbDown": {
       "suggested_key": {
         "default": "Ctrl+Shift+Down",
         "mac": "Command+MacCtrl+Down"
       },
-      "description": "Thumb Down Pandora Song"
+      "description": "Thumb Down Pandora Song",
+      "global": true
     },
     "pandora-thumbUp": {
       "suggested_key": {
         "default": "Ctrl+Shift+Up",
         "mac": "Command+MacCtrl+Up"
       },
-      "description": "Thumb Up Pandora Song"
+      "description": "Thumb Up Pandora Song",
+      "global": true
     }
   },
   "permissions": [
-    "*://*.pandora.com/*",
-    "tabs"
+    "*://*.pandora.com/*"
   ],
   "applications": {
     "gecko": {

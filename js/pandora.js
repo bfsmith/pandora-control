@@ -1,35 +1,52 @@
 (function () {
   let api = {};
 
+  const browserControl = chrome || browser;
+
   const sendMessage = (msg) => {
     const message = Object.assign(
       { player: 'pandora' },
       msg);
-    chrome.runtime.sendMessage(message);
+    browserControl.runtime.sendMessage(message);
   }
 
   const onInit = () => {
-    const playbackControl = document.querySelector('.region-bottomBar');
-    // const playButton = playbackControl.querySelector('.PlayButton');
+    const playbackControl = () => document.querySelector('.region-bottomBar');
+    const playButton = () => playbackControl().querySelector('.PlayButton');
     // const pauseButton = playbackControl.querySelector('.PlayButton');
-    const thumbDownButton = playbackControl.querySelector('.ThumbDownButton');
-    const thumbUpButton = playbackControl.querySelector('.ThumbUpButton');
-    const skipButton = playbackControl.querySelector('.SkipButton');
+    const thumbDownButton = () => playbackControl().querySelector('.ThumbDownButton');
+    const thumbUpButton =  () => playbackControl().querySelector('.ThumbUpButton');
+    const skipButton = () => playbackControl().querySelector('.SkipButton');
+    const keepListeningButton = () => document.querySelector('.StillListeningBody button');
 
-    const click = (el) => el.click();
-    const isPlaying = () => playbackControl.querySelector('.PlayButton').dataset.qa === 'play_button';
+    const click = (el) => {
+      if (el) { 
+        el.click(); 
+      }
+    };
+    const isPlaying = () => keepListeningButton() == undefined && playButton().dataset.qa === 'play_button';
     const play = () => {
-      click(playbackControl.querySelector('.PlayButton'));
+      console.log('play pushed!');
+      const keepListening = keepListeningButton();
+      console.log('keepListening', keepListening);
+      if (keepListening) {
+        click(keepListening);
+        console.log('tried to click keep listening button');
+      } else {
+        click(playButton());
+        console.log('tried to click play button');
+      }
       sendMessage({ status: { playing: true } });
     };
     const pause = () => {
-      click(playbackControl.querySelector('.PlayButton'));
+      click(playButton());
+      console.log('tried to click pause button');
       sendMessage({ status: { playing: false } });
 
     };
-    const thumbDown = () => click(thumbDownButton);
-    const thumbUp = () => click(thumbUpButton);
-    const skip = () => click(skipButton);
+    const thumbDown = () => click(thumbDownButton());
+    const thumbUp = () => click(thumbUpButton());
+    const skip = () => click(skipButton());
 
     api.isPlaying = isPlaying;
     api.play = play;
@@ -39,6 +56,9 @@
     api.skip = skip;
 
     setInterval(() => {
+      if (keepListeningButton() !== undefined) {
+        keepListeningButton().click();
+      }
       sendMessage({ status: { playing: isPlaying() } });
     }, 5000);
   };
@@ -52,8 +72,9 @@
     }
   }, 200);
 
-  chrome.runtime.onMessage.addListener(
+  browserControl.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
+      console.log('message received', request);
       if (request.player === 'pandora') {
         switch (request.action) {
           case 'playpause': api.isPlaying() ? api.pause() : api.play();
