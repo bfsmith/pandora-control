@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Pandora Control",
   "description": "This extension lets you control Pandora from the keyboard",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "background": {
     "scripts": [
       "js/bg.js"
@@ -57,9 +57,9 @@
     "*://*.pandora.com/*",
     "tabs"
   ],
-  "applications": {
+  "browser_specific_settings": {
     "gecko": {
-      "id": "pandoracontrol@bfsmith.com"
+      "id": "pandoracontrol@mentallyelastic.com"
     }
   }
 }

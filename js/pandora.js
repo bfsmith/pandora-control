@@ -56,7 +56,7 @@
     api.skip = skip;
 
     setInterval(() => {
-      if (keepListeningButton() !== undefined) {
+      if (keepListeningButton()) {
         keepListeningButton().click();
       }
       sendMessage({ status: { playing: isPlaying() } });

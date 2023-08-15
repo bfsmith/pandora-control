@@ -8,14 +8,16 @@ Pick the manifest.xyz.json that matches your browser and rename it to manifest.j
 1. `mv manifest.json manifest.json.bak`  
 1. Bump the version number in manifest.ff.json
 1. `cp manifest.ff.json manifest.json`
-1. `zip pandora-control-ff.zip img/* js/* icon.png LICENSE manifest.json`
+1. `zip pandora-control-ff.xpi img/* js/* icon.png LICENSE manifest.json`
 1. `rm manifest.json`
 
 # Package for Chrome
+```sh
 mv manifest.json manifest.json.bak
 cp manifest.chrome.json manifest.json
 zip pandora-control-chrome.zip img/* js/* icon.png LICENSE manifest.json
 mv manifest.json.bak manifest.json
+```
 
 # Sign the addon for Firefox to load it as a non-temporary addon
 https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/Distribution
