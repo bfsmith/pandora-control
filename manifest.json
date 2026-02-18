@@ -59,7 +59,11 @@
   ],
   "browser_specific_settings": {
     "gecko": {
-      "id": "pandoracontrol@mentallyelastic.com"
+      "id": "pandoracontrol@bfsmith.github.com",
+      "data_collection_permissions": {
+        "required": ["none"],
+        "optional": []
+      }
     }
   }
 }
